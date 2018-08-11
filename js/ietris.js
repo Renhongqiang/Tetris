@@ -11,6 +11,7 @@ var board = new Array(20);
                 board[i][j] = 0;    
             }    
         }
+var downSpeed = 1000;  //向下加速
 //移动许可
 var left,right,bottom;
 left = right = bottom = false;
@@ -65,15 +66,18 @@ t[2] = {x:1, y:0};
 t[3] = {x:1, y:2};
 
 
-
 window.onload = function(){
     undateTable(tempShape = creatShape());
 }
-//循环执行函数
+//循环刷新执行函数
 setInterval(function(){
     print();
     check();
     },10);
+//循环向下函数
+setInterval(function(){
+    downTable();
+    },downSpeed);
 //边界检测
 function check(){
     //左边界
@@ -133,10 +137,30 @@ document.onkeydown = function(ev){
         }
     }
 }
+//向下
+function downTable(){
+    //右、下移 倒序遍历
+    for(var i = 19; i >= 0; i--){
+        for(var j = 19; j >= 0; j--){
+            if(board[i][j] == 1){
+                    board[i + 1][j] = 11;
+                    board[i][j] = 0;
+            } 
+        }
+    }
+    for(var i = 0; i < 20; i++){
+        for(var j = 0; j < 10; j++){
+            if(board[i][j] == 11){
+                board[i][j] = 1;
+            }
+            
+        }
+    }
+}
 //top变形
 function topShape(ts){
     if(ts === ii)
-        alert("aa");
+        alert("top change");
 }
 //左右下移动方块
 function moveShape(target){
