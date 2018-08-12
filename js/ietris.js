@@ -65,52 +65,101 @@ t[1] = {x:0, y:1};
 t[2] = {x:1, y:0};    
 t[3] = {x:1, y:2};
 
-
+//初始化产生第一个方块
 window.onload = function(){
     undateTable(tempShape = creatShape());
 }
+
 //循环刷新执行函数
 setInterval(function(){
     print();
     check();
     },10);
+
 //循环向下函数
 setInterval(function(){
     downTable();
     },downSpeed);
+
 //边界检测
 function check(){
-    //左边界
+    //1、左边界
     var lf = true;
+    //检测第一列左边界
     for(var i = 0; i < 20 ;i++){
         if(board[i][0] == 1)
             lf = false;
+    }
+    //检测是否触碰左侧已存在块
+    for(var i = 0; i < 20 ;i++){
+        for(var j = 0; j < 10; j++){
+            if(board[i][j] == 1 && board[i][j - 1] == 2){
+                lf = false;
+            }
+        }    
     }
     if(lf)
         left = true;
     else
         left = false;
-    //右边界
+    //2、右边界
     var rf = true;
+    //检测第十列右侧边界
     for(var i = 0; i < 20 ;i++){
         if(board[i][9] == 1)
             rf = false;
+    }
+    // 检测是否触碰右侧已存在块
+    for(var i = 0; i < 20 ;i++){
+        for(var j = 0; j < 10; j++){
+            if(board[i][j] == 1 && board[i][j + 1] == 2){
+                rf = false;
+            }
+        }    
     }
     if(rf)
         right = true;
     else
         right = false;
-    //下边界
+    //3、下边界
     var bf = true;
+    //底20行边界
     for(var i = 0; i < 10 ;i++){
-        if(board[19][i] == 1)
+        if(board[19][i] == 1){
             bf = false;
+            //1 ——> 2 触底后当前方块置2，表示不可移动
+            oneToTwo();
+            undateTable(tempShape = creatShape()); //触底后产生新方块
+        }   
+    }
+    //本方块底部是否触碰到已存在块
+    for(var i = 0; i < 20 ;i++){
+        for(var j = 0; j < 10; j++){
+            if(board[i][j] == 1 && board[i + 1][j] == 2){
+                bf = false;
+                //1 ——> 2 触底后当前方块置2，表示不可移动
+                oneToTwo();
+                undateTable(tempShape = creatShape()); //触底后产生新方块
+            }
+        }    
     }
     if(bf)
         bottom = true;
     else
         bottom = false;
 }
+
+//1置2 可移动方块变为不可以动方块
+function oneToTwo(){
+    for(var i = 19; i >= 0; i--){
+        for(var j = 19; j >= 0; j--){
+            if(board[i][j] == 1){
+                    board[i][j] = 2;
+            } 
+        }
+    }
+}
+
 //检测键盘
 document.onkeydown = function(ev){
     var oEvent = ev || event;
@@ -157,11 +206,13 @@ function downTable(){
         }
     }
 }
+
 //top变形
 function topShape(ts){
     if(ts === ii)
         alert("top change");
 }
+
 //左右下移动方块
 function moveShape(target){
     //左移 正序遍历
@@ -199,7 +250,8 @@ function moveShape(target){
         }
     }
 }
-//绘制某图形
+
+//绘制界面
 function print(){
     for(var i = 0; i < 20; i++){
         for(var j = 0; j < 10; j++){
@@ -213,7 +265,8 @@ function print(){
         }
     }
 }
-//根据生成方块更新场地
+
+//根据生成方块种类更新出生方块
 function undateTable(cShape){
     for(var i = 0; i < 20; i++){
         for(var j = 0; j < 10; j++){
@@ -225,7 +278,8 @@ function undateTable(cShape){
         }
     }
 }
-//生成方块
+
+//随机生成方块 返回种类
 function creatShape(){
     var num = (Math.floor(Math.random()*20)+1)%7;    
             switch(num){  
