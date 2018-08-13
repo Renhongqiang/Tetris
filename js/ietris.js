@@ -99,7 +99,9 @@ setInterval(function(){
 
 //循环向下函数
 setInterval(function(){
-    downTable();
+    if(doFlag){
+        downTable();
+    }
     },downSpeed);
 
 //边界检测
