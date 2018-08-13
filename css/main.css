@@ -5,10 +5,46 @@
     margin: 30px auto;
     border: 2px rgb(38, 0, 255) solid;
 }
+
+.boxLeft {
+    width: 124px;
+    height: 124px;
+    position: absolute;
+    margin: -634px 770px;
+    border: 2px rgb(38, 0, 255) solid;
+}
 #board {
     border-collapse:collapse;
 }
 #board tr td {
     width: 30px;
     height: 30px;
+}
+#printScore {
+    position: absolute;
+    margin: -500px 770px;
+    width: 120px;
+    color: rgb(38, 0, 255);
+    font-size: 25px;
+    font-family: 黑体;
+}
+#controlBtn {
+    position: absolute;
+    margin: -450px 740px;
+    width: 190px;
+}
+.btn {
+    background: rgb(255, 59, 59);
+    color: rgb(102, 102, 102);
+    margin-left: 10px;
+    font-size: 15px;
+    width: 70px
+}
+
+.btn:hover {
+    background: rgb(102, 102, 102);
+    color: rgb(255, 59, 59);
+    -moz-box-shadow: 5px 5px 7px #333333;
+    -webkit-box-shadow: 5px 5px 7px #333333;
+    box-shadow: 5px 5px 7px #333333;
 }

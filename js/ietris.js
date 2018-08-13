@@ -11,7 +11,9 @@ var board = new Array(20);
                 board[i][j] = 0;    
             }    
         }
-var downSpeed = 1000;  //向下加速
+var score = 0;         //分数
+var scorePrint = document.getElementById("printScore"); //分数显示
+var downSpeed = 1000;  //向下移动速度 1000 ms
 //移动许可
 var left,right,bottom;
 left = right = bottom = false;
@@ -65,15 +67,34 @@ t[1] = {x:0, y:1};
 t[2] = {x:1, y:0};    
 t[3] = {x:1, y:2};
 
-//初始化产生第一个方块
-window.onload = function(){
-    undateTable(tempShape = creatShape());
+var doFlag = false; //true 开始 false 停止
+var startNum = true;//第一次点击开始初始化一个方块
+
+//开始按钮
+function start(){
+    doFlag = true;
+    if(startNum){
+        undateTable(tempShape = creatShape());
+        startNum = false;
+    }
 }
+//暂停按钮
+function stop(){
+    doFlag = false;
+}
+
+
+//初始化产生第一个方块
+// window.onload = function(){
+//     undateTable(tempShape = creatShape());
+// }
 
 //循环刷新执行函数
 setInterval(function(){
-    print();
-    check();
+    if(doFlag){
+      print();
+      check();  
+    }
     },10);
 
 //循环向下函数
@@ -268,6 +289,7 @@ function print(){
 
 //根据生成方块种类更新出生方块
 function undateTable(cShape){
+    checkScore();
     for(var i = 0; i < 20; i++){
         for(var j = 0; j < 10; j++){
             for(var k = 0;k < 4; k++){
@@ -277,6 +299,35 @@ function undateTable(cShape){
             }
         }
     }
+}
+
+//得分检测、消除得分行
+function checkScore(){
+    var scoreFlag = true;
+    for(var i = 19; i >= 0; i--){
+        scoreFlag = 1;
+        for(var j = 0; j < 10; j++){
+            if(board[i][j] != 2){
+                scoreFlag = false;
+            }
+        }
+        if (scoreFlag){
+            //的分行消除
+            for(var j = 0; j < 10; j++){
+                board[i][j] = 0;
+            }
+            //i - 1 行下移一行
+            for(var i1 = i; i1 > 0; i1--){
+                for(var j1 = 0; j1 < 10; j1++){
+                    board[i1][j1] = board[i1 - 1][j1];
+                }
+            }
+            score++;
+            console.log(score);
+            scorePrint.innerText = "分数：" + score;
+        }
+    }
+    scoreFlag = false;
 }
 
 //随机生成方块 返回种类
