@@ -25,6 +25,7 @@ var o = new Array(4);
 var zl = new Array(4);         
 var zr = new Array(4);         
 var t = new Array(4);
+var numShape = 1; //单双数控制
 var tempShape = new Array(4);  //记住当前方块
 
 tempShape[0] = {x:0, y:0};    
@@ -84,10 +85,10 @@ function stop(){
 }
 
 
-//初始化产生第一个方块
-// window.onload = function(){
-//     undateTable(tempShape = creatShape());
-// }
+// 初始化产生第一个方块
+window.onload = function(){
+    creatShape();
+}
 
 //循环刷新执行函数
 setInterval(function(){
@@ -340,10 +341,10 @@ function creatShape(){
                     return ii;      
                 }    
                 case 1:{    
-                    return ll;       
+                    return  ll;       
                 }    
                 case 2:{    
-                    return lr;      
+                    return  lr;      
                 }    
                 case 3:{    
                     return o;      
@@ -357,5 +358,5 @@ function creatShape(){
                 case 6:{    
                     return t;     
                 }   
-            }  
+            }
 }
