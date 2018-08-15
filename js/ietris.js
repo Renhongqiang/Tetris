@@ -98,7 +98,8 @@ window.onload = function(){
 setInterval(function(){
     if(doFlag){
       print();
-      check();  
+      check();
+      checkGame();  
     }
     },10);
 
@@ -106,9 +107,16 @@ setInterval(function(){
 setInterval(function(){
     if(doFlag){
         downTable();
-        // console.log(iShape,jShape);
     }
     },downSpeed);
+
+//游戏结束检测
+function checkGame(){
+    if(board[0][4] == 2){
+        doFlag = false;
+        alert("游戏结束！您的分数：" + score);
+    }
+}
 
 //边界检测
 function check(){
