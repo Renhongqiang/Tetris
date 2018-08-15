@@ -8,7 +8,7 @@
 
 .boxLeft {
     width: 124px;
-    height: 124px;
+    height: 94px;
     position: absolute;
     margin: -634px 770px;
     border: 2px rgb(38, 0, 255) solid;
@@ -17,6 +17,13 @@
     border-collapse:collapse;
 }
 #board tr td {
+    width: 30px;
+    height: 30px;
+}
+#previewBoard {
+    border-collapse:collapse;
+}
+#previewBoard tr td {
     width: 30px;
     height: 30px;
 }

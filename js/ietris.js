@@ -1,16 +1,23 @@
 // 10 * 20
 
 var table = document.getElementById("board"); //整个table表格
+var previewTable = document.getElementById("previewBoard"); //预览table表格
 //初始化 10 * 20 二维数组 0代表无方块 1代表在移动的  2代表底部固定的
 var board = new Array(20);   
         for(var i=0;i<20;i++){   
-            board[i] = new Array(10);    
-        }   
-        for(var i=0;i<20;i++){    
+            board[i] = new Array(10);   
             for(var j=0; j<10; j++){    
                 board[i][j] = 0;    
-            }    
-        }
+            }  
+        }   
+
+var previewboard = new Array(4);   
+        for(var i=0;i<3;i++){   
+            previewboard[i] = new Array(4);   
+            for(var j=0; j<4; j++){    
+                previewboard[i][j] = 0;    
+            }  
+        }   
 var score = 0;         //分数
 var scorePrint = document.getElementById("printScore"); //分数显示
 var downSpeed = 1000;  //向下移动速度 1000 ms
@@ -31,12 +38,18 @@ var zl = new Array(4);
 var zr = new Array(4);         
 var t = new Array(4);
 var numShape = 1; //单双数控制
+var nextShape = new Array(4);  //记住当前方块
 var tempShape = new Array(4);  //记住当前方块
 
 tempShape[0] = {x:0, y:0};    
 tempShape[1] = {x:0, y:0};    
 tempShape[2] = {x:0, y:0};    
 tempShape[3] = {x:0, y:0};
+
+nextShape[0] = {x:0, y:0};    
+nextShape[1] = {x:0, y:0};    
+nextShape[2] = {x:0, y:0};    
+nextShape[3] = {x:0, y:0};
 
 ii[0] = {x:-2, y:0};    
 ii[1] = {x:-1, y:0};    
@@ -79,8 +92,10 @@ var startNum = true;//第一次点击开始初始化一个方块
 //开始按钮
 function start(){
     doFlag = true;
+    //执行一次
     if(startNum){
         undateTable(tempShape = creatShape());
+        nextShape = creatShape();
         startNum = false;
     }
 }
@@ -93,6 +108,7 @@ function stop(){
 setInterval(function(){
     if(doFlag){
       print();
+      makePreview()
       check();
       checkGame();  
     }
@@ -101,6 +117,7 @@ setInterval(function(){
 //循环向下函数
 setInterval(function(){
     if(doFlag){
+        checkDown();
         moveShape("b");
     }
     },downSpeed);
@@ -153,6 +170,10 @@ function check(){
         right = true;
     else
         right = false;
+}
+
+//检查向下移动: 此处需要与向下移动周期同步以实现触底可以左右移动，所以需单独一个方法
+function checkDown(){
     //3、下边界
     var bf = true;
     //底20行边界
@@ -161,7 +182,8 @@ function check(){
             bf = false;
             //1 ——> 2 触底后当前方块置2，表示不可移动
             oneToTwo();
-            undateTable(tempShape = creatShape()); //触底后产生新方块
+            undateTable(tempShape = nextShape); //触底后产生新方块
+            nextShape = creatShape();
         }   
     }
     //本方块底部是否触碰到已存在块
@@ -171,7 +193,9 @@ function check(){
                 bf = false;
                 //1 ——> 2 触底后当前方块置2，表示不可移动
                 oneToTwo();
-                undateTable(tempShape = creatShape()); //触底后产生新方块
+                undateTable(tempShape = nextShape); //触底后产生新方块
+                nextShape = creatShape();
+                console.log(nextShape);
             }
         }    
     }
@@ -218,6 +242,7 @@ document.onkeydown = function(ev){
             }break;
         }
         case 40:{
+            checkDown();
             if(bottom){
                 moveShape("b");
             } break;
@@ -230,7 +255,7 @@ function checkTop(){
     topFlag = true;
     switch(tempShape){
         case ii:{
-            if(jShape <= 0 || jShape >= 9)
+            if(jShape <= 1 || jShape >= 9)
                 topFlag = false;
             break;
         }
@@ -290,7 +315,7 @@ function moveShape(target){
         }
         case 'b':{
             iShape++;
-            makeShape(tempShape,iShape,jShape);
+            makeShape(tempShape,iShape,jShape); 
             break;
         }
     }
@@ -384,4 +409,29 @@ function creatShape(){
                     return t;     
                 }   
             }
+}
+
+//预览界面生成
+function makePreview(){
+    for(var i = 0; i < 3; i++){
+        for(var j = 0; j < 4; j++){
+            previewboard[i][j] = 0;
+            for(var k = 0;k < 4; k++){
+                if(nextShape[k].x + 2 == j && -nextShape[k].y + 1  == i){
+                    previewboard[i][j] = 1;
+                }
+            }
+        }
+    }
+    for(var i = 0; i < 3; i++){
+        for(var j = 0; j < 4; j++){
+            if(previewboard[i][j] == 1){
+                previewTable.rows[i].cells[j].style.backgroundColor = "red"; 
+            }
+            else{
+                previewTable.rows[i].cells[j].style.backgroundColor = "#FFF"; 
+            }
+                
+        }
+    }
 }
