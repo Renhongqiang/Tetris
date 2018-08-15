@@ -17,6 +17,10 @@ var downSpeed = 1000;  //向下移动速度 1000 ms
 //移动许可
 var left,right,bottom;
 left = right = bottom = false;
+
+var jShape = 0; //方块原点j
+var iShape = 0; //方块原点i
+
 //7种方块
 var ii = new Array(4);         
 var ll = new Array(4);         
@@ -33,40 +37,40 @@ tempShape[1] = {x:0, y:0};
 tempShape[2] = {x:0, y:0};    
 tempShape[3] = {x:0, y:0};
 
-ii[0] = {x:0, y:2};    
-ii[1] = {x:0, y:0};    
-ii[2] = {x:0, y:1};    
-ii[3] = {x:0, y:3};
+ii[0] = {x:-2, y:0};    
+ii[1] = {x:-1, y:0};    
+ii[2] = {x:0, y:0};    
+ii[3] = {x:1, y:0};
 
-ll[0] = {x:1, y:1};    
-ll[1] = {x:2, y:0};    
-ll[2] = {x:0, y:1};    
-ll[3] = {x:2, y:1};
+ll[0] = {x:0, y:1};    
+ll[1] = {x:0, y:0};    
+ll[2] = {x:-1, y:-1};    
+ll[3] = {x:0, y:-1};
 
-lr[0] = {x:1, y:1};    
-lr[1] = {x:2, y:2};    
-lr[2] = {x:0, y:1};    
-lr[3] = {x:2, y:1};
+lr[0] = {x:0, y:1};    
+lr[1] = {x:0, y:0};    
+lr[2] = {x:0, y:-1};    
+lr[3] = {x:1, y:-1};
 
-o[0] = {x:0, y:0};    
+o[0] = {x:-1, y:1};    
 o[1] = {x:0, y:1};    
-o[2] = {x:1, y:0};    
-o[3] = {x:1, y:1};
+o[2] = {x:-1, y:0};    
+o[3] = {x:0, y:0};
 
-zl[0] = {x:1, y:1};    
-zl[1] = {x:0, y:0};    
-zl[2] = {x:0, y:1};    
-zl[3] = {x:1, y:2};
+zl[0] = {x:-1, y:1};    
+zl[1] = {x:0, y:1};    
+zl[2] = {x:0, y:0};    
+zl[3] = {x:1, y:0};
 
-zr[0] = {x:1, y:1};    
-zr[1] = {x:0, y:1};    
-zr[2] = {x:0, y:2};    
-zr[3] = {x:1, y:0};
+zr[0] = {x:0, y:1};    
+zr[1] = {x:1, y:1};    
+zr[2] = {x:-1, y:0};    
+zr[3] = {x:0, y:0};
 
-t[0] = {x:1, y:1};    
-t[1] = {x:0, y:1};    
-t[2] = {x:1, y:0};    
-t[3] = {x:1, y:2};
+t[0] = {x:0, y:1};    
+t[1] = {x:-1, y:0};    
+t[2] = {x:0, y:0};    
+t[3] = {x:1, y:0};
 
 var doFlag = false; //true 开始 false 停止
 var startNum = true;//第一次点击开始初始化一个方块
@@ -102,6 +106,7 @@ setInterval(function(){
 setInterval(function(){
     if(doFlag){
         downTable();
+        // console.log(iShape,jShape);
     }
     },downSpeed);
 
@@ -192,15 +197,18 @@ document.onkeydown = function(ev){
         case 37:{
             if(left){
                 moveShape("l");
+                jShape--; //左移方块原点坐标自减
             }break;
         }
         case 38:{
+            rotateShape(tempShape);
             topShape(tempShape);
             break;
         }
         case 39:{
             if(right){
                 moveShape("r");
+                jShape++; //右移方块原点坐标自加
             }break;
         }
         case 40:{
@@ -212,7 +220,7 @@ document.onkeydown = function(ev){
 }
 //向下
 function downTable(){
-    //右、下移 倒序遍历
+    //下移 倒序遍历
     for(var i = 19; i >= 0; i--){
         for(var j = 19; j >= 0; j--){
             if(board[i][j] == 1){
@@ -226,18 +234,42 @@ function downTable(){
             if(board[i][j] == 11){
                 board[i][j] = 1;
             }
-            
+        }
+    }
+    iShape++; //方块原点坐标自加
+}
+
+//top变形
+function topShape(cShape){
+    checkScore();
+    for(var i = 0; i < 20; i++){
+        for(var j = 0; j < 10; j++){
+            if(board[i][j]  == 1)
+                board[i][j] = 0;
+        }
+    }
+    for(var i = 0; i < 20; i++){
+        for(var j = 0; j < 10; j++){
+            for(var k = 0;k < 4; k++){
+                if(cShape[k].x + jShape == j && -cShape[k].y + iShape  == i){
+                    board[i][j] = 1;
+                }
+            }
         }
     }
 }
 
-//top变形
-function topShape(ts){
-    if(ts === ii)
-        alert("top change");
+//90度旋转当前方块标准坐标
+function rotateShape(thisShape){
+    var temp;
+    for(var i = 0; i < 4; i++){
+        temp = thisShape[i].x;
+        thisShape[i].x = -thisShape[i].y;
+        thisShape[i].y = temp;
+    }
 }
 
-//左右下移动方块
+//左右移动方块
 function moveShape(target){
     //左移 正序遍历
     for(var i = 0; i < 20; i++){
@@ -250,7 +282,7 @@ function moveShape(target){
             } 
         }
     }
-    //右、下移 倒序遍历
+    //右移 倒序遍历
     for(var i = 19; i >= 0; i--){
         for(var j = 19; j >= 0; j--){
             if(board[i][j] == 1){
@@ -296,8 +328,12 @@ function undateTable(cShape){
     for(var i = 0; i < 20; i++){
         for(var j = 0; j < 10; j++){
             for(var k = 0;k < 4; k++){
-                if(cShape[k].x == i && cShape[k].y + 3 == j){
+                if(cShape[k].x + 4 == j && -cShape[k].y + 1  == i){
                     board[i][j] = 1;
+                    if(cShape[k].x == 0 && cShape[k].y == 0){
+                        iShape = i;
+                        jShape = j;
+                    }//记住原点坐标，正常为（1,4）
                 }
             }
         }
