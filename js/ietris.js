@@ -15,8 +15,9 @@ var score = 0;         //分数
 var scorePrint = document.getElementById("printScore"); //分数显示
 var downSpeed = 1000;  //向下移动速度 1000 ms
 //移动许可
-var left,right,bottom;
+var left,right,bottom,topFlag;
 left = right = bottom = false;
+topFlag = true;
 
 var jShape = 0; //方块原点j
 var iShape = 0; //方块原点i
@@ -88,12 +89,6 @@ function stop(){
     doFlag = false;
 }
 
-
-// 初始化产生第一个方块
-window.onload = function(){
-    creatShape();
-}
-
 //循环刷新执行函数
 setInterval(function(){
     if(doFlag){
@@ -106,7 +101,7 @@ setInterval(function(){
 //循环向下函数
 setInterval(function(){
     if(doFlag){
-        downTable();
+        moveShape("b");
     }
     },downSpeed);
 
@@ -205,18 +200,21 @@ document.onkeydown = function(ev){
         case 37:{
             if(left){
                 moveShape("l");
-                jShape--; //左移方块原点坐标自减
+                // jShape--; //左移方块原点坐标自减
             }break;
         }
         case 38:{
-            rotateShape(tempShape);
-            topShape(tempShape);
+            checkTop();
+            if(topFlag){
+                rotateShape(tempShape);
+                makeShape(tempShape,iShape,jShape); 
+            }
             break;
         }
         case 39:{
             if(right){
                 moveShape("r");
-                jShape++; //右移方块原点坐标自加
+                // jShape++; //右移方块原点坐标自加
             }break;
         }
         case 40:{
@@ -226,30 +224,30 @@ document.onkeydown = function(ev){
         }
     }
 }
-//向下
-function downTable(){
-    //下移 倒序遍历
-    for(var i = 19; i >= 0; i--){
-        for(var j = 19; j >= 0; j--){
-            if(board[i][j] == 1){
-                    board[i + 1][j] = 11;
-                    board[i][j] = 0;
-            } 
+
+//top变形检查
+function checkTop(){
+    topFlag = true;
+    switch(tempShape){
+        case ii:{
+            if(jShape <= 0 || jShape >= 9)
+                topFlag = false;
+            break;
+        }
+        case o:{
+            topFlag = false;
+            break;
+        }
+        default:{
+            if(jShape <= 0 || jShape >= 9)
+                topFlag = false;
+            break;
         }
     }
-    for(var i = 0; i < 20; i++){
-        for(var j = 0; j < 10; j++){
-            if(board[i][j] == 11){
-                board[i][j] = 1;
-            }
-        }
-    }
-    iShape++; //方块原点坐标自加
 }
 
-//top变形
-function topShape(cShape){
-    checkScore();
+//top变形 函数功能：根据传入的方块种类和方块中心坐标，在坐标位置刷新出相应方块,并将此前的为1的可移动方块置0消除
+function makeShape(cShape,is,js){
     for(var i = 0; i < 20; i++){
         for(var j = 0; j < 10; j++){
             if(board[i][j]  == 1)
@@ -259,7 +257,7 @@ function topShape(cShape){
     for(var i = 0; i < 20; i++){
         for(var j = 0; j < 10; j++){
             for(var k = 0;k < 4; k++){
-                if(cShape[k].x + jShape == j && -cShape[k].y + iShape  == i){
+                if(cShape[k].x + js == j && -cShape[k].y + is  == i){
                     board[i][j] = 1;
                 }
             }
@@ -267,7 +265,7 @@ function topShape(cShape){
     }
 }
 
-//90度旋转当前方块标准坐标
+//根据方块原点逆时针90度旋转当前方块标准坐标,(x,y) => (-y,x)
 function rotateShape(thisShape){
     var temp;
     for(var i = 0; i < 4; i++){
@@ -277,40 +275,23 @@ function rotateShape(thisShape){
     }
 }
 
-//左右移动方块
+//左、右、下移动方块
 function moveShape(target){
-    //左移 正序遍历
-    for(var i = 0; i < 20; i++){
-        for(var j = 0; j < 10; j++){
-            if(board[i][j] == 1){
-                if(target == "l") {
-                    board[i][j - 1] = 11;
-                    board[i][j] = 0;
-                }
-            } 
+    switch(target){
+        case 'l':{
+            jShape--;
+            makeShape(tempShape,iShape,jShape);
+            break;
         }
-    }
-    //右移 倒序遍历
-    for(var i = 19; i >= 0; i--){
-        for(var j = 19; j >= 0; j--){
-            if(board[i][j] == 1){
-                if(target == "r") {   
-                    board[i][j + 1] = 11;
-                    board[i][j] = 0;
-                }
-                if(target == "b") {
-                    board[i + 1][j] = 11;
-                    board[i][j] = 0;
-                }
-            } 
+        case 'r':{
+            jShape++;
+            makeShape(tempShape,iShape,jShape);
+            break;
         }
-    }
-    for(var i = 0; i < 20; i++){
-        for(var j = 0; j < 10; j++){
-            if(board[i][j] == 11){
-                board[i][j] = 1;
-            }
-            
+        case 'b':{
+            iShape++;
+            makeShape(tempShape,iShape,jShape);
+            break;
         }
     }
 }
@@ -370,8 +351,8 @@ function checkScore(){
                 }
             }
             score++;
-            console.log(score);
             scorePrint.innerText = "分数：" + score;
+            i++;//下移后i行变化需重新检查一次
         }
     }
     scoreFlag = false;
