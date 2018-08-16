@@ -4,17 +4,17 @@ var table = document.getElementById("board"); //整个table表格
 var previewTable = document.getElementById("previewBoard"); //预览table表格
 //初始化 10 * 20 二维数组 0代表无方块 1代表在移动的  2代表底部固定的
 var board = new Array(20);   
-        for(var i=0;i<20;i++){   
+        for(var i = 0;i < 20;i++){   
             board[i] = new Array(10);   
-            for(var j=0; j<10; j++){    
+            for(var j = 0; j < 10; j++){    
                 board[i][j] = 0;    
             }  
         }   
 
 var previewboard = new Array(4);   
-        for(var i=0;i<3;i++){   
+        for(var i = 0;i < 5;i++){   
             previewboard[i] = new Array(4);   
-            for(var j=0; j<4; j++){    
+            for(var j = 0; j < 5; j++){    
                 previewboard[i][j] = 0;    
             }  
         }   
@@ -102,6 +102,10 @@ function start(){
 //暂停按钮
 function stop(){
     doFlag = false;
+}
+//重新开始
+function newStart(){
+    location.reload();
 }
 
 //循环刷新执行函数
@@ -195,7 +199,6 @@ function checkDown(){
                 oneToTwo();
                 undateTable(tempShape = nextShape); //触底后产生新方块
                 nextShape = creatShape();
-                console.log(nextShape);
             }
         }    
     }
@@ -375,7 +378,7 @@ function checkScore(){
                     board[i1][j1] = board[i1 - 1][j1];
                 }
             }
-            score++;
+            score+=10;
             scorePrint.innerText = "分数：" + score;
             i++;//下移后i行变化需重新检查一次
         }
@@ -413,18 +416,18 @@ function creatShape(){
 
 //预览界面生成
 function makePreview(){
-    for(var i = 0; i < 3; i++){
-        for(var j = 0; j < 4; j++){
+    for(var i = 0; i < 5; i++){
+        for(var j = 0; j < 5; j++){
             previewboard[i][j] = 0;
             for(var k = 0;k < 4; k++){
-                if(nextShape[k].x + 2 == j && -nextShape[k].y + 1  == i){
+                if(nextShape[k].x + 2 == j && -nextShape[k].y + 2  == i){
                     previewboard[i][j] = 1;
                 }
             }
         }
     }
-    for(var i = 0; i < 3; i++){
-        for(var j = 0; j < 4; j++){
+    for(var i = 0; i < 5; i++){
+        for(var j = 0; j < 5; j++){
             if(previewboard[i][j] == 1){
                 previewTable.rows[i].cells[j].style.backgroundColor = "red"; 
             }

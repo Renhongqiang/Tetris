@@ -7,8 +7,8 @@
 }
 
 .boxLeft {
-    width: 124px;
-    height: 94px;
+    width: 154px;
+    height: 154px;
     position: absolute;
     margin: -634px 770px;
     border: 2px rgb(38, 0, 255) solid;
@@ -29,7 +29,7 @@
 }
 #printScore {
     position: absolute;
-    margin: -500px 770px;
+    margin: -450px 770px;
     width: 120px;
     color: rgb(38, 0, 255);
     font-size: 25px;
@@ -37,7 +37,7 @@
 }
 #controlBtn {
     position: absolute;
-    margin: -450px 740px;
+    margin: -400px 760px;
     width: 190px;
 }
 .btn {
